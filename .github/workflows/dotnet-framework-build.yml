@@ -1,0 +1,70 @@
+name: Build and publish packages
+
+on:
+  workflow_call:
+    inputs:
+      semver:
+        required: true
+        type: string
+        description: "Target version for the nuget packages"
+      gh_packages_url:
+        required: true
+        type: string
+        description: "GitHub packages Url"
+      package_name:
+        required: true
+        type: string
+        description: "Package name"
+      artifact_root:
+        required: true
+        type: string
+        description: "Artifact root"
+    secrets:
+      GHA_USERNAME:
+        required: true
+      GHA_TOKEN:
+        required: true
+
+
+jobs:
+  version_job:
+    name: Calculate version number
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Octopus Tooling
+        run: choco install octopustools -y
+        shell: powershell
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1
+        with:
+          nuget-version: '5.x'
+
+      - name: Restore Packages
+        run: |
+          nuget sources Add -Name GitHub -Source ${{ inputs.gh_packages_url }} -UserName ${{ secrets.GHA_USERNAME }} -Password ${{ secrets.GHA_TOKEN }} -StorePasswordInClearText
+          nuget setapikey ${{ secrets.GHA_TOKEN }} -Source ${{ inputs.gh_packages_url }}
+          nuget restore
+
+      - name: Set version in all AssemblyInfo.cs files
+        uses: secondbounce/assemblyinfo-update@v2
+        with:
+          version: ${{ inputs.semver }}
+          
+      - name: Build Solution
+        run: |
+           msbuild.exe UnifiedFileProcessor.sln /p:platform="Any CPU" /p:configuration="Release" /p:version=${{ inputs.semver }}
+
+      - name: Package output
+        run: |
+          octo pack --id=${{ inputs.package_name }} --format="Zip" --version=${{ inputs.semver }} --basePath="UnifiedFileProcessor\bin\Release" --outFolder=${{ inputs/artifact_root }}
+          
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          path: "src/artifacts/${{ inputs.package_name }}.${{ inputs.semver }}.zip"

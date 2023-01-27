@@ -1,0 +1,38 @@
+name: Build and publish packages
+
+on:
+  workflow_call:
+    inputs:
+      semver:
+        required: true
+        type: string
+        description: "Target version for the nuget packages"      
+      source_folder:
+        required: true
+        type: string
+        description: "Source folder for the codes in the repository"
+
+jobs:
+  version_job:
+    name: Calculate version number
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: | 
+            6.0.x
+
+      - name: Install dependencies
+        run: dotnet restore ${{ inputs.source_folder }}
+      
+      - name: Build
+        run: dotnet build ${{ inputs.source_folder }} --configuration Release --no-restore -p:Version=${{ inputs.semver }}
+      
+      - name: Test
+        run: dotnet test ${{ inputs.source_folder }} --no-restore --verbosity normal
+
+      - name: Publish the package to GPR
+        run: dotnet nuget push **/bin/Release/*.nupkg --source https://nuget.pkg.github.com/ardevora/index.json --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
