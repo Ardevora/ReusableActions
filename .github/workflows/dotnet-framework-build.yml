@@ -25,7 +25,6 @@ on:
       GHA_TOKEN:
         required: true
 
-
 jobs:
   version_job:
     name: Calculate version number
