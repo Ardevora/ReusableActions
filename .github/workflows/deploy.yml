@@ -1,0 +1,10 @@
+name: Deploy packages
+
+on:
+  workflow_call:
+
+jobs:
+  push_packages:
+    name: Push packages to octopus
+    runs-on: windows-latest
+    
