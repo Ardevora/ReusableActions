@@ -7,6 +7,10 @@ on:
         required: true
         type: string
         description: "Target version for the nuget packages"
+      source_folder:
+        required: true
+        type: string
+        description: "Source folder for the codes in the repository"
       gh_packages_url:
         required: true
         type: string
@@ -29,6 +33,10 @@ jobs:
   version_job:
     name: Calculate version number
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.source_folder }}
+        
     steps:
       - uses: actions/checkout@v2
 
