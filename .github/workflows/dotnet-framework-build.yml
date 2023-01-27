@@ -32,6 +32,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Display the version
+        run: |
+          echo "Version: ${{ inputs.semver }}"
+          echo "Lower version: ${{ inputs.semver_lowercase }}"
+
       - name: Install Octopus Tooling
         run: choco install octopustools -y
         shell: powershell
@@ -61,7 +66,7 @@ jobs:
 
       - name: Package output
         run: |
-          octo pack --id=${{ inputs.package_name }} --format="Zip" --version=${{ inputs.semver }} --basePath="UnifiedFileProcessor\bin\Release" --outFolder=${{ inputs/artifact_root }}
+          octo pack --id=${{ inputs.package_name }} --format="Zip" --version=${{ inputs.semver }} --basePath="UnifiedFileProcessor\bin\Release" --outFolder=${{ inputs.artifact_root }}
           
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.0
