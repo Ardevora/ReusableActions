@@ -7,4 +7,6 @@ jobs:
   push_packages:
     name: Push packages to octopus
     runs-on: windows-latest
-    
+    steps:
+      uses: actions/checkout@v2
+      
