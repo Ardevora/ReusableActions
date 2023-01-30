@@ -2,6 +2,33 @@ name: Deploy packages
 
 on:
   workflow_call:
+    inputs:
+      semver:
+        required: true
+        type: string
+        description: "Target version for the nuget packages"
+      source_folder:
+        required: true
+        type: string
+        description: "Source folder for the codes in the repository"
+      artifact_root:
+        required: true
+        type: string
+        description: "Artifact root"
+      package_name:
+        required: true
+        type: string
+        description: "Package name"
+      octopus_space:
+        required: false
+        type: string
+        default: "default"
+        description: "The octopus space to deploy to"
+    secrets:
+      OCTOPUS_APIKEY:
+        required: true
+      OCTOPUS_SERVER_URL:
+        required: true
 
 jobs:
   push_packages:
@@ -10,9 +37,22 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: push
+      - name: Display the version
         run: |
-          echo "TBD Push to octopus here"
+          echo "Version: ${{ inputs.semver }}"
+
+      - name: Install Octopus CLI
+        uses: OctopusDeploy/install-octopus-cli-action@v1.1.8
+        with:
+          version: latest
+
+      - name: Push packages to octopus
+        uses: OctopusDeploy/push-package-action@v1.1.1
+        with:
+          api_key: ${{ secrets.OCTOPUS_APIKEY }}
+          server: ${{ secrets.OCTOPUS_SERVER_URL }}
+          packages: "${{ inputs.source_folder }}/${{ inputs.artifact_root }}/${{ inputs.package_name }}.${{ inputs.semVer }}.zip"
+          space: ${{  inputs.octopus_space }}
 
       
 

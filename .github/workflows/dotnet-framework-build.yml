@@ -16,8 +16,9 @@ on:
         type: string
         description: "Name of the solution to be built"
       gh_packages_url:
-        required: true
+        required: false
         type: string
+        default: "https://nuget.pkg.github.com/ardevora/index.json"
         description: "GitHub packages Url"
       package_name:
         required: true
@@ -35,7 +36,7 @@ on:
 
 jobs:
   version_job:
-    name: Calculate version number
+    name: Build the solution
     runs-on: windows-latest
     defaults:
       run:
@@ -47,7 +48,6 @@ jobs:
       - name: Display the version
         run: |
           echo "Version: ${{ inputs.semver }}"
-          echo "Lower version: ${{ inputs.semver_lowercase }}"
 
       - name: Install Octopus Tooling
         run: choco install octopustools -y
