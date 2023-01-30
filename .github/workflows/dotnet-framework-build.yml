@@ -11,6 +11,10 @@ on:
         required: true
         type: string
         description: "Source folder for the codes in the repository"
+      solution_name:
+        required: true
+        type: string
+        description: "Name of the solution to be built"
       gh_packages_url:
         required: true
         type: string
@@ -36,7 +40,7 @@ jobs:
     defaults:
       run:
         working-directory: ${{ inputs.source_folder }}
-        
+
     steps:
       - uses: actions/checkout@v2
 
@@ -70,11 +74,11 @@ jobs:
           
       - name: Build Solution
         run: |
-           msbuild.exe UnifiedFileProcessor.sln /p:platform="Any CPU" /p:configuration="Release" /p:version=${{ inputs.semver }}
+           msbuild.exe ${{ inputs.solution_name }}.sln /p:platform="Any CPU" /p:configuration="Release" /p:version=${{ inputs.semver }}
 
       - name: Package output
         run: |
-          octo pack --id=${{ inputs.package_name }} --format="Zip" --version=${{ inputs.semver }} --basePath="UnifiedFileProcessor\bin\Release" --outFolder=${{ inputs.artifact_root }}
+          octo pack --id=${{ inputs.package_name }} --format="Zip" --version=${{ inputs.semver }} --basePath="${{ inputs.solution_name }}\bin\Release" --outFolder=${{ inputs.artifact_root }}
           
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.0
