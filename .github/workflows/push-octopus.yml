@@ -1,4 +1,4 @@
-name: Deploy packages
+name: Push packages to Octopus
 
 on:
   workflow_call:
@@ -37,7 +37,7 @@ jobs:
     defaults:
       run:
         working-directory: ${{ inputs.source_folder }}
-        
+
     steps:
       - uses: actions/checkout@v2
 
