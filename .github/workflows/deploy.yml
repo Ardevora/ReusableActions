@@ -34,6 +34,10 @@ jobs:
   push_packages:
     name: Push packages to octopus
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.source_folder }}
+        
     steps:
       - uses: actions/checkout@v2
 
