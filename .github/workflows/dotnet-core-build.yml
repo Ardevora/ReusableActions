@@ -6,7 +6,11 @@ on:
       semver:
         required: true
         type: string
-        description: "Target version for the nuget packages"      
+        description: "Target version for the nuget packages"     
+      dotnet_version:
+        required: true
+        type: string
+        description: "Target version for the dotnet packages" 
       source_folder:
         required: true
         type: string
@@ -27,8 +31,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: | 
-            6.0.x
+          dotnet-version: ${{ inputs.dotnet_version }}
 
       - name: Install dependencies
         run: dotnet restore ${{ inputs.source_folder }}
