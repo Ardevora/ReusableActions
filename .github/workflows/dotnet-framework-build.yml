@@ -1,0 +1,86 @@
+name: Build and publish packages
+
+on:
+  workflow_call:
+    inputs:
+      semver:
+        required: true
+        type: string
+        description: "Target version for the nuget packages"
+      source_folder:
+        required: true
+        type: string
+        description: "Source folder for the codes in the repository"
+      solution_name:
+        required: true
+        type: string
+        description: "Name of the solution to be built"
+      gh_packages_url:
+        required: false
+        type: string
+        default: "https://nuget.pkg.github.com/ardevora/index.json"
+        description: "GitHub packages Url"
+      package_name:
+        required: true
+        type: string
+        description: "Package name"
+      artifact_root:
+        required: true
+        type: string
+        description: "Artifact root"
+    secrets:
+      GHA_USERNAME:
+        required: true
+      GHA_TOKEN:
+        required: true
+
+jobs:
+  version_job:
+    name: Build the solution
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.source_folder }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Display the version
+        run: |
+          echo "Version: ${{ inputs.semver }}"
+
+      - name: Install Octopus Tooling
+        run: choco install octopustools -y
+        shell: powershell
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1
+        with:
+          nuget-version: '5.x'
+
+      - name: Restore Packages
+        run: |
+          nuget sources Add -Name GitHub -Source ${{ inputs.gh_packages_url }} -UserName ${{ secrets.GHA_USERNAME }} -Password ${{ secrets.GHA_TOKEN }} -StorePasswordInClearText
+          nuget setapikey ${{ secrets.GHA_TOKEN }} -Source ${{ inputs.gh_packages_url }}
+          nuget restore
+
+      - name: Set version in all AssemblyInfo.cs files
+        uses: secondbounce/assemblyinfo-update@v2
+        with:
+          version: ${{ inputs.semver }}
+          
+      - name: Build Solution
+        run: |
+           msbuild.exe ${{ inputs.solution_name }}.sln /p:platform="Any CPU" /p:configuration="Release" /p:version=${{ inputs.semver }}
+
+      - name: Package output
+        run: |
+          octo pack --id=${{ inputs.package_name }} --format="Zip" --version=${{ inputs.semver }} --basePath="${{ inputs.solution_name }}\bin\Release" --outFolder=${{ inputs.artifact_root }}
+          
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          path: "src/artifacts/${{ inputs.package_name }}.${{ inputs.semver }}.zip"

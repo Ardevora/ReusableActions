@@ -1,0 +1,79 @@
+name: Push packages to Octopus
+
+on:
+  workflow_call:
+    inputs:
+      semver:
+        required: true
+        type: string
+        description: "Target version for the nuget packages"
+      source_folder:
+        required: true
+        type: string
+        description: "Source folder for the codes in the repository"
+      artifact_root:
+        required: true
+        type: string
+        description: "Artifact root"
+      package_name:
+        required: true
+        type: string
+        description: "Package name"
+      octopus_space:
+        required: false
+        type: string
+        default: "default"
+        description: "The octopus space to deploy to"
+      create_release:
+        required: false
+        type: boolean
+      octopus_project:
+        required: false
+        type: string
+        description: "The name of the octopus project; must be supplied when creating a release"
+    secrets:
+      OCTOPUS_APIKEY:
+        required: true
+      OCTOPUS_SERVER_URL:
+        required: true
+
+jobs:
+  push_packages:
+    name: Push packages to octopus
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.source_folder }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Display the version
+        run: |
+          echo "Version: ${{ inputs.semver }}"
+
+      - name: Install Octopus CLI
+        uses: OctopusDeploy/install-octopus-cli-action@v1.1.8
+        with:
+          version: latest
+
+      - name: Push packages to octopus
+        uses: OctopusDeploy/push-package-action@v1.1.1
+        with:
+          api_key: ${{ secrets.OCTOPUS_APIKEY }}
+          server: ${{ secrets.OCTOPUS_SERVER_URL }}
+          packages: "${{ inputs.source_folder }}/${{ inputs.artifact_root }}/${{ inputs.package_name }}.${{ inputs.semver }}.zip"
+          space: ${{ inputs.octopus_space }}
+
+      - name: Create and deploy release in Octopus
+        if: ${{ inputs.create_release && inputs.octopus_project != '' }}
+        uses: OctopusDeploy/create-release-action@v1.1.1
+        with:
+          api_key: ${{ secrets.OCTOPUS_APIKEY }}
+          server: ${{ secrets.OCTOPUS_SERVER_URL }}
+          space: ${{ inputs.octopus_space }}
+          project: ${{ inputs.octopus_project }}
+          release_number: ${{ inputs.semver }}
+          release_notes: ${{ github.event.head_commit.message }}
+          progress: true 
+
