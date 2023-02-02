@@ -33,6 +33,9 @@ on:
         type: string
         default: 'Zip'
         description: "The format to use when packing the output (Zip or NuPkg)"
+      push_to_package_store:
+        required: false
+        type: boolean
     secrets:
       GHA_USERNAME:
         required: true
@@ -89,3 +92,8 @@ jobs:
         uses: actions/upload-artifact@v3.1.0
         with:
           path: "src/artifacts/${{ inputs.package_name }}.${{ inputs.semver }}.${{ inputs.format }}"
+
+      - name: Push to package store
+        if: ${{ inputs.push_to_package_store }}
+        run: |
+          nuget push "src/artifacts/${{ inputs.package_name }}.${{ inputs.semver }}.${{ inputs.format }}" --source ${{ inputs.gh_packages_url }} --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
