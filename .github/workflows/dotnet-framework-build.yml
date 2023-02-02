@@ -28,6 +28,11 @@ on:
         required: true
         type: string
         description: "Artifact root"
+      format:
+        required: false
+        type: string
+        default: 'Zip'
+        description: "The format to use when packing the output (Zip or NuPkg)"
     secrets:
       GHA_USERNAME:
         required: true
@@ -78,9 +83,9 @@ jobs:
 
       - name: Package output
         run: |
-          octo pack --id=${{ inputs.package_name }} --format="Zip" --version=${{ inputs.semver }} --basePath="${{ inputs.solution_name }}\bin\Release" --outFolder=${{ inputs.artifact_root }}
+          octo pack --id=${{ inputs.package_name }} --format="${{ inputs.format }}" --version=${{ inputs.semver }} --basePath="${{ inputs.solution_name }}\bin\Release" --outFolder=${{ inputs.artifact_root }}
           
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.0
         with:
-          path: "src/artifacts/${{ inputs.package_name }}.${{ inputs.semver }}.zip"
+          path: "src/artifacts/${{ inputs.package_name }}.${{ inputs.semver }}.${{ inputs.format }}"
