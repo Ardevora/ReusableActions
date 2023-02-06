@@ -23,6 +23,7 @@ on:
       run_tests:
         required: false
         default: true
+        type: boolean
       push_to_package_store:
         required: false
         type: boolean
