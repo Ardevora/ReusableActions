@@ -20,6 +20,9 @@ on:
         type: string
         default: "https://nuget.pkg.github.com/ardevora/index.json"
         description: "GitHub packages Url"
+      run_tests:
+        required: false
+        default: true
       push_to_package_store:
         required: false
         type: boolean
@@ -43,6 +46,7 @@ jobs:
         run: dotnet build ${{ inputs.source_folder }} --configuration Release --no-restore -p:Version=${{ inputs.semver }}
       
       - name: Test
+        if: ${{ inputs.run_tests }}
         run: dotnet test ${{ inputs.source_folder }} --no-restore --verbosity normal
 
       - name: Publish the package to GPR
