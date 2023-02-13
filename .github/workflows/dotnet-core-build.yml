@@ -27,7 +27,10 @@ on:
       push_to_package_store:
         required: false
         type: boolean
-
+    secrets:
+      GHA_TOKEN:
+        required: true
+        
 jobs:
   version_job:
     name: Build the solution
