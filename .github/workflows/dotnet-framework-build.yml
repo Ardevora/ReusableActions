@@ -43,7 +43,7 @@ on:
         required: true
 
 jobs:
-  version_job:
+  build_job:
     name: Build the solution
     runs-on: windows-latest
     defaults:

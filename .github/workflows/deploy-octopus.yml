@@ -38,7 +38,7 @@ on:
         required: true
 
 jobs:
-  push_packages:
+  deploy_job:
     name: Push packages to octopus
     runs-on: windows-latest
     defaults:
