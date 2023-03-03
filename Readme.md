@@ -4,6 +4,7 @@ The following workflows have been created in order to simplify and standardize C
 
 - git-versioning
 - dotnet-core-build
+- dotnet-core-docker-build
 - dotnet-framework-build
 - deploy-octopus
 
@@ -26,6 +27,9 @@ workflow semantic version number lowercased.
 Builds a .net solution, runs any tests and publishes to a nuget store.
 ### Usage
 ```
+  versioning:
+    uses: ardevora/reusableactions/.github/workflows/git-versioning.yml@main
+
   build:
     needs: versioning
     uses: ardevora/reusableactions/.github/workflows/dotnet-core-build.yml@main
@@ -53,10 +57,47 @@ None
 ### Secrets
 #### **GHA_TOKEN** [required]
 
+## dotnet-core-docker-build
+Build and packages a docker image and publishes to the github container registry
+### Usage
+```
+  versioning:
+    uses: ardevora/reusableactions/.github/workflows/git-versioning.yml@main
+
+  build:
+    needs: versioning
+    uses: ardevora/reusableactions/.github/workflows/dotnet-core-docker-build.yml@main
+    with:
+      semver_lowercase: ${{ needs.versioning.outputs.semver_lowercase}}
+      source_folder: "src"
+      package_name: "ardevora.package.api"
+      docker_project: "Ardevora.Package.WebApi"
+    secrets: inherit
+```
+### Inputs
+#### **semver_lowercase**
+Target version for the docker image
+
+#### **source_folder**
+Relative folder for the source files. [string] [required]
+#### **package_name**
+Package name for the docker image
+#### **docker_project**
+Name of the docker project to be built
+### Outputs
+None
+### Secrets
+#### **GHCR_TOKEN** [required]
+#### **GHA_USERNAME** [required]
+#### **GHA_TOKEN** [required]
+
 ## dotnet-framework-build
 Builds and packages a dotnet framework solution and publishes to a package store.
 ### Usage
 ```
+  versioning:
+    uses: ardevora/reusableactions/.github/workflows/git-versioning.yml@main
+
   build:
     needs: versioning
     uses: ardevora/reusableactions/.github/workflows/dotnet-framework-build.yml@main
@@ -95,6 +136,9 @@ None
 Pushes packages to Octopus
 ### Usage
 ```
+  versioning:
+    uses: ardevora/reusableactions/.github/workflows/git-versioning.yml@main
+
   push:
     needs: versioning
     uses: ardevora/reusableactions/.github/workflows/push-octopus.yml@main
