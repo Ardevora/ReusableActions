@@ -28,7 +28,7 @@ on:
         required: false
         type: string
         default: "ghcr.io"
-        descripton: "Github container registry"
+        description: "Github container registry"
     secrets:
       GHCR_TOKEN:
         required: true
