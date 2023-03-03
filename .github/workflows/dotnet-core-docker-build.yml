@@ -17,8 +17,8 @@ on:
         description: "Package name for the docker image"
       docker_project:
         required: true
-          type: string
-          description: "Name of the docker project to be built"
+        type: string
+        description: "Name of the docker project to be built"
       gh_packages_url:
         required: false
         type: string
