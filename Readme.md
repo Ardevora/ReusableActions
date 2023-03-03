@@ -5,6 +5,7 @@ The following workflows have been created in order to simplify and standardize C
 - git-versioning
 - dotnet-core-build
 - dotnet-core-docker-build
+- dotnet-core-docker-release
 - dotnet-framework-build
 - deploy-octopus
 
@@ -75,21 +76,75 @@ Build and packages a docker image and publishes to the github container registry
     secrets: inherit
 ```
 ### Inputs
-#### **semver_lowercase**
-Target version for the docker image
-
+#### **semver_lowercase** 
+Target version for the docker image [string] [required]
 #### **source_folder**
 Relative folder for the source files. [string] [required]
 #### **package_name**
-Package name for the docker image
+Package name for the docker image [string] [required]
 #### **docker_project**
-Name of the docker project to be built
+Name of the docker project to be built [string] [required]
+#### **gh_packages_url** [default: https://nuget.pkg.github.com/ardevora/index.json]
+Target nuget store to publish the packages to. [string]
+#### **gh_container_registry** [default: ghcr.io]
+Github container registry [string]
 ### Outputs
 None
 ### Secrets
 #### **GHCR_TOKEN** [required]
 #### **GHA_USERNAME** [required]
 #### **GHA_TOKEN** [required]
+
+## dotnet-core-docker-release
+Build and packages a docker image and publishes to the azure container registry, optionally triggering an octopus release
+### Usage
+```
+  versioning:
+    uses: ardevora/reusableactions/.github/workflows/git-versioning.yml@main
+
+  build:
+    needs: versioning
+    uses: ardevora/reusableactions/.github/workflows/dotnet-core-docker-release.yml@main
+    with:
+      semver: ${{ needs.versioning.outputs.semver}}
+      semver_lowercase: ${{ needs.versioning.outputs.semver_lowercase}}
+      source_folder: "src"
+      package_name: "ardevora.ops.msci.api"
+      docker_project: "Ardevora.Ops.Msci.WebApi"
+      octopus_project: "Ops Msci API"
+      create_release: true
+    secrets: inherit
+```
+### Inputs
+#### **semver_lowercase**
+Target version for the docker image [string] [required]
+#### **semver_lowercase**
+Target version for the docker image (lowercased) [string] [required]
+#### **source_folder**
+Relative folder for the source files. [string] [required]
+#### **package_name**
+Package name for the docker image [string] [required]
+#### **docker_project**
+Name of the docker project to be built
+#### **gh_packages_url** [default: https://nuget.pkg.github.com/ardevora/index.json]
+Github packages url. [string]
+#### **create_release**
+Create an octopus release, must specify the octopus project plus provide the necessary secrets to access it [string]
+#### **octopus_project**
+The name of the octopus project to create the release for [string]
+#### **octopus_space** [default: default]
+The octopus space to deploy to
+
+### Outputs
+None
+### Secrets
+#### **SS_ACR_NAME** [required]
+#### **SS_ACR_USERNAME** [required]
+#### **SS_ACR_PASSWORD** [required]
+#### **GHA_USERNAME** [required]
+#### **GHA_TOKEN** [required]
+#### **OCTOPUS_APIKEY** 
+#### **OCTOPUS_SERVER_URL** 
 
 ## dotnet-framework-build
 Builds and packages a dotnet framework solution and publishes to a package store.
