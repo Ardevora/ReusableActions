@@ -2,6 +2,12 @@ name: Calculate version number
 
 on:
   workflow_call:
+    inputs:
+      version_prefix:
+        required: false
+        type: string
+        default: "v"
+        description: "Provides ability to choose a prefix before the version or not, default is 'v'"
     outputs:
       semver:
         description: "workflow semantic version number"
@@ -37,7 +43,7 @@ jobs:
         id: changecase
         uses: ASzc/change-string-case-action@v1
         with:
-          string: v${{ steps.gitversion.outputs.semVer }}
+          string: ${{ inputs.version_prefix }}${{ steps.gitversion.outputs.semVer }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
