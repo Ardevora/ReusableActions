@@ -6,7 +6,7 @@ on:
       version_prefix:
         required: false
         type: string
-        default: "v"
+        default: ""
         description: "Provides ability to choose a prefix before the version or not, default is 'v'"
     outputs:
       semver:
