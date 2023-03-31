@@ -31,8 +31,8 @@ on:
       format:
         required: false
         type: string
-        default: 'Zip'
-        description: "The format to use when packing the output (Zip or NuPkg)"
+        default: 'zip'
+        description: "The format to use when packing the output (zip or nupkg)"
       push_to_package_store:
         required: false
         type: boolean
