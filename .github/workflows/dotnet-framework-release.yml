@@ -73,6 +73,10 @@ jobs:
         run: |
           echo "Version: ${{ inputs.semver }}"
 
+      - name: Install Octopus Tooling
+        run: choco install octopustools -y
+        shell: powershell
+
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
@@ -110,6 +114,11 @@ jobs:
         run: |
           nuget push "src/artifacts/${{ inputs.package_name }}.${{ inputs.semver }}.${{ inputs.format }}" --source ${{ inputs.gh_packages_url }} --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
       
+      - name: Install Octopus CLI
+        uses: OctopusDeploy/install-octopus-cli-action@v1.1.8
+        with:
+          version: latest
+
       - name: Push packages to octopus
         uses: OctopusDeploy/push-package-action@v1.1.1
         with:
