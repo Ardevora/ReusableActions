@@ -11,11 +11,12 @@ on:
         required: true
         type: string
         description: "Source folder for the codes in the repository"
-      test_projects:        
-        required: false        
+      test_projects:
+        required: false
+        type: string
         description: "A list of test projects, one per line"
       dotnet_version:
-        required: false        
+        required: false
         type: string
         description: "dot net version to use"
         default: "7.0.x"
