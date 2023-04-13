@@ -58,10 +58,17 @@ jobs:
         with:
           dotnet-version: ${{ inputs.dotnet_version }}
       
-      - name: Run tests
-        uses: ./.github/actions/dotnet-tests
-        with:
-          test_projects: ${{ inputs.test_projects }}
+      - name: Run tests for each test project
+        run: |
+          if [[ -n "${{ inputs.test_projects }}" ]]; then
+            while read -r test_project; do
+              echo "Running tests for: $test_project"
+              dotnet test "$test_project" --verbosity normal
+            done <<< "${{ inputs.test_projects }}"
+          else
+            echo "No test projects specified, skipping test run"          
+          fi
+        shell: bash
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
