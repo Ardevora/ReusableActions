@@ -67,6 +67,9 @@ jobs:
         run: |
           if [[ -n "${{ inputs.test_projects }}" ]]; then
             while read -r test_project; do
+              if [[ -z "$test_project" ]]; then
+                continue
+              fi
               echo "Running tests for: $test_project"
               dotnet test "$test_project" --verbosity normal
             done <<< "${{ inputs.test_projects }}"
