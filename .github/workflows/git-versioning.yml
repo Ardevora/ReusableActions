@@ -37,7 +37,8 @@ jobs:
 
       - name: Display the version
         run: |
-          echo "Version: ${{ steps.gitversion.outputs.semVer }}"
+          echo "semVer: ${{ steps.gitversion.outputs.semVer }}"
+          echo "assemblySemVer: ${{ steps.gitversion.outputs.assemblySemVer }}"
 
       - name: Change string case
         id: changecase
@@ -45,10 +46,8 @@ jobs:
         with:
           string: ${{ inputs.version_prefix }}${{ steps.gitversion.outputs.semVer }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
     outputs:
       semver: ${{ steps.gitversion.outputs.semVer }}
       semver_lowercase: ${{ steps.changecase.outputs.lowercase }}
-      assembly_semver: ${{ steps.gitversion.outputs.AssemblySemVer }}
+      assembly_semver: ${{ steps.gitversion.outputs.assemblySemVer }}
     
