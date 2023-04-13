@@ -15,6 +15,9 @@ on:
       semver_lowercase:
         description: "workflow semantic version number lowercased"
         value: ${{ jobs.version_job.outputs.semver_lowercase }}
+      assembly_semver:
+        description: "workflow semantic assembly version number"
+        value: ${{ jobs.version_job.outputs.assembly_semver }}
 
 jobs:
   version_job:
