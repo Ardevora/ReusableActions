@@ -50,4 +50,5 @@ jobs:
     outputs:
       semver: ${{ steps.gitversion.outputs.semVer }}
       semver_lowercase: ${{ steps.changecase.outputs.lowercase }}
+      assembly_semver: ${{ steps.gitversion.outputs.AssemblySemVer }}
     
