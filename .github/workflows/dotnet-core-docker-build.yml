@@ -73,6 +73,7 @@ jobs:
       - name: Run tests for each test project
         run: |
           if [[ -n "${{ inputs.test_projects }}" ]]; then
+            dotnet nuget add source -u "${{ secrets.GHA_USERNAME }}" -p "${{ secrets.GHA_TOKEN }}" --store-password-in-clear-text -n github "${{ inputs.gh_packages_url }}"
             while read -r test_project; do
               if [[ -z "$test_project" ]]; then
                 continue
