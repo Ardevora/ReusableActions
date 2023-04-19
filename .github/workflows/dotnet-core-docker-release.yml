@@ -74,7 +74,7 @@ on:
 jobs:
   build_job:
     name: Build and push the image to ACR
-    runs-on: [self-hosted, linux, X64]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
