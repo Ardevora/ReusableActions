@@ -54,4 +54,4 @@ jobs:
 
       - name: Push chart to registry as OCI artifact
         run: |
-          helm push ${{ steps.package_chart.outputs.chart_file_name }} oci://{{ secrets.SS_ACR_NAME }}/helm
+          helm push ${{ steps.package_chart.outputs.chart_file_name }} oci://${{ secrets.SS_ACR_NAME }}/helm
