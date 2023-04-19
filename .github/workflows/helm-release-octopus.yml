@@ -61,6 +61,11 @@ jobs:
           mv "$INPUT_FILE_NAME" "$NEW_FILE_NAME"
           echo "::set-output name=new_file_name::$NEW_FILE_NAME"
 
+      - name: Install Octopus CLI
+        uses: OctopusDeploy/install-octopus-cli-action@v1.1.8
+        with:
+          version: latest
+
       - name: Push packages to octopus
         uses: OctopusDeploy/push-package-action@v1.1.1
         with:
