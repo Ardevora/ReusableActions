@@ -29,7 +29,7 @@ on:
         required: true
 
 jobs:
-  build_job:
+  package_job:
     name: Package and push helm chart to ACR
     runs-on: ubuntu-latest
     steps:
