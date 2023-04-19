@@ -78,6 +78,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ inputs.dotnet_version }}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
         with:
