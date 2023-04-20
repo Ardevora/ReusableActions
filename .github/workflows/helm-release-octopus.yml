@@ -20,6 +20,11 @@ on:
         type: string
         default: "default"
         description: "The octopus space to deploy to"
+      octopus_overwrite_mode:
+        required: false
+        type: string
+        default: "FailIfExists"
+        description: "The octopus overwrite mode for package"
     secrets:
       OCTOPUS_APIKEY:
         required: false
@@ -72,4 +77,5 @@ jobs:
           api_key: ${{ secrets.OCTOPUS_APIKEY }}
           server: ${{ secrets.OCTOPUS_SERVER_URL }}
           packages: "${{ steps.rename_file.outputs.new_file_name }}"
+          overwrite_mode: ${{ inputs.octopus_overwrite_mode }}
           space: ${{ inputs.octopus_space }}
