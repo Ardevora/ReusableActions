@@ -48,6 +48,10 @@ jobs:
           token: ${{ secrets.GHA_TOKEN }}
         id: install
 
+      - name: Validate helm chart
+        run: |
+          helm lint ${{ inputs.source_folder }} 
+
       - name: Package Helm chart and get resulting file name
         id: package_chart
         run: |
