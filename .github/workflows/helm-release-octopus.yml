@@ -25,6 +25,13 @@ on:
         type: string
         default: "FailIfExists"
         description: "The octopus overwrite mode for package"
+      create_release:
+        required: false
+        type: boolean
+      octopus_project:
+        required: false
+        type: string
+        description: "The name of the octopus project; must be supplied when creating a release"
     secrets:
       OCTOPUS_APIKEY:
         required: false
@@ -83,3 +90,15 @@ jobs:
           packages: "${{ steps.rename_file.outputs.new_file_name }}"
           overwrite_mode: ${{ inputs.octopus_overwrite_mode }}
           space: ${{ inputs.octopus_space }}
+
+      - name: Create and deploy release in Octopus
+        if: ${{ inputs.create_release && inputs.octopus_project != '' }}
+        uses: OctopusDeploy/create-release-action@v1.1.1
+        with:
+          api_key: ${{ secrets.OCTOPUS_APIKEY }}
+          server: ${{ secrets.OCTOPUS_SERVER_URL }}
+          space: ${{ inputs.octopus_space }}
+          project: ${{ inputs.octopus_project }}
+          release_number: ${{ inputs.chart_semver }}
+          release_notes: ${{ github.event.head_commit.message }}
+          progress: true 
