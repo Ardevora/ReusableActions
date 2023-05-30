@@ -10,7 +10,7 @@ on:
       semver_lowercase:
         required: true
         type: string
-        description: "Target version for the docker image (lowercased)"      
+        description: "Target version for the docker image (lowercased)"
       source_folder:
         required: true
         type: string
@@ -64,15 +64,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          buildkitd-flags: |
+            platforms = [ "linux/amd64" ]
+
       - name: Login to Azure Container Registry
         uses: azure/docker-login@v1
         with:
           login-server: ${{ secrets.SS_ACR_NAME }}
           username: ${{ secrets.SS_ACR_USERNAME }}
           password: ${{ secrets.SS_ACR_PASSWORD }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
 
       - name: Build and push container image to registry - ACR
         uses: docker/build-push-action@v2

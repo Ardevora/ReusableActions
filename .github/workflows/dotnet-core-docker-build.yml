@@ -6,7 +6,7 @@ on:
       semver_lowercase:
         required: true
         type: string
-        description: "Target version for the docker image"      
+        description: "Target version for the docker image"
       source_folder:
         required: true
         type: string
