@@ -6,12 +6,7 @@ on:
       semver_lowercase:
         required: true
         type: string
-        description: "Target version for the docker image"
-      build_version:
-        required: false
-        default: 1.0.0
-        type: string
-        description: "Target assembly and file version of the application"
+        description: "Target version for the docker image"      
       source_folder:
         required: true
         type: string
@@ -72,4 +67,4 @@ jobs:
             PACKAGES_URL=${{ inputs.gh_packages_url }}
             PACKAGES_USERNAME=${{ secrets.GHA_USERNAME }}
             PACKAGES_TOKEN=${{ secrets.GHA_TOKEN }}
-            VERSION=${{ inputs.build_version }}
+            VERSION=${{ inputs.semver_lowercase }}
