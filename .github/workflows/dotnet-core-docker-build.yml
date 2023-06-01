@@ -42,7 +42,7 @@ jobs:
     name: Build the image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -53,7 +53,7 @@ jobs:
           registry: ${{ inputs.gh_container_registry }}
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
-      
+
       - name: Build and push container image to github
         uses: docker/build-push-action@v2
         with:
@@ -67,3 +67,4 @@ jobs:
             PACKAGES_URL=${{ inputs.gh_packages_url }}
             PACKAGES_USERNAME=${{ secrets.GHA_USERNAME }}
             PACKAGES_TOKEN=${{ secrets.GHA_TOKEN }}
+            VERSION=${{ inputs.semver_lowercase }}

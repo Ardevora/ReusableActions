@@ -45,9 +45,6 @@ jobs:
         with:
           string: ${{ inputs.version_prefix }}${{ steps.gitversion.outputs.semVer }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
     outputs:
       semver: ${{ steps.gitversion.outputs.semVer }}
       semver_lowercase: ${{ steps.changecase.outputs.lowercase }}
-    

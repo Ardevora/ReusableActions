@@ -14,7 +14,7 @@ on:
       source_folder:
         required: true
         type: string
-        description: "Source folder for the codes in the repository"    
+        description: "Source folder for the codes in the repository"
       package_name:
         required: true
         type: string
@@ -89,6 +89,7 @@ jobs:
             PACKAGES_URL=${{ inputs.gh_packages_url }}
             PACKAGES_USERNAME=${{ secrets.GHA_USERNAME }}
             PACKAGES_TOKEN=${{ secrets.GHA_TOKEN }}
+            VERSION=${{ inputs.semver_lowercase }}
 
   deploy_job:
     if: ${{ inputs.create_release && inputs.octopus_project != '' }}
