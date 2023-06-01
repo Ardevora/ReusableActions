@@ -3,14 +3,10 @@ name: Package and upload helm charts to octopus feed
 on:
   workflow_call:
     inputs:
-      chart_semver:
+      semver_lowercase:
         required: true
         type: string
         description: "Target sem version for the chart"
-      app_version:
-        required: true
-        type: string
-        description: "Target app version"
       source_folder:
         required: true
         type: string
@@ -62,20 +58,10 @@ jobs:
       - name: Package Helm chart and get resulting file name
         id: package_chart
         run: |
-          CHART_PATH=$(helm package ${{ inputs.source_folder }} --version ${{ inputs.chart_semver }} --app-version ${{ inputs.app_version }} | grep 'Successfully packaged chart' | awk -F': ' '{print $2}')
-          CHART_FILE_NAME=$(basename $CHART_PATH)
+          PKGOUT=$(mktemp -d)
+          helm package ${{ inputs.source_folder }} --version ${{ inputs.semver_lowercase }} --app-version ${{ inputs.semver_lowercase }} -d $PKGOUT
+          CHART_FILE_NAME=$(ls $PKGOUT)
           echo "::set-output name=chart_file_name::$CHART_FILE_NAME"
-
-      - name: Rename file
-        id: rename_file
-        run: |
-          INPUT_FILE_NAME=${{ steps.package_chart.outputs.chart_file_name }}
-          PREFIX=$(echo "$INPUT_FILE_NAME" | awk -F- '{print $1}')
-          VERSION=$(echo "$INPUT_FILE_NAME" | awk -F- '{print $2}' | awk -F. '{OFS="."; NF--; print}')
-          EXTENSION=$(echo "$INPUT_FILE_NAME" | awk -F. '{print $NF}')
-          NEW_FILE_NAME="${PREFIX}.${VERSION}.${EXTENSION}"
-          mv "$INPUT_FILE_NAME" "$NEW_FILE_NAME"
-          echo "::set-output name=new_file_name::$NEW_FILE_NAME"
 
       - name: Install Octopus CLI
         uses: OctopusDeploy/install-octopus-cli-action@v1.1.8
@@ -87,7 +73,7 @@ jobs:
         with:
           api_key: ${{ secrets.OCTOPUS_APIKEY }}
           server: ${{ secrets.OCTOPUS_SERVER_URL }}
-          packages: "${{ steps.rename_file.outputs.new_file_name }}"
+          packages: "${{ steps.package_chart.outputs.chart_file_name }}"
           overwrite_mode: ${{ inputs.octopus_overwrite_mode }}
           space: ${{ inputs.octopus_space }}
 
@@ -99,6 +85,6 @@ jobs:
           server: ${{ secrets.OCTOPUS_SERVER_URL }}
           space: ${{ inputs.octopus_space }}
           project: ${{ inputs.octopus_project }}
-          release_number: ${{ inputs.chart_semver }}
+          release_number: ${{ inputs.semver_lowercase }}
           release_notes: ${{ github.event.head_commit.message }}
           progress: true 
