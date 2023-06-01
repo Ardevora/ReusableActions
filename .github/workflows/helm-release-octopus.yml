@@ -58,9 +58,9 @@ jobs:
       - name: Package Helm chart and get resulting file name
         id: package_chart
         run: |
-          PKGOUT=$(mktemp -d)
+          PKGOUT=$(mktemp -d --tmpdir=.)
           helm package ${{ inputs.source_folder }} --version ${{ inputs.semver_lowercase }} --app-version ${{ inputs.semver_lowercase }} -d $PKGOUT
-          CHART_FILE_NAME=$(ls -d "$PKGOUT/"*)
+          CHART_FILE_NAME=$(ls -d "$PKGOUT/"*.tgz)
           echo "::set-output name=chart_file_name::$CHART_FILE_NAME"
 
       - name: Install Octopus CLI

@@ -3,14 +3,10 @@ name: Validate and package helm chart
 on:
   workflow_call:
     inputs:
-      chart_semver:
+      semver_lowercase:
         required: true
         type: string
         description: "Target sem version for the chart"
-      app_version:
-        required: true
-        type: string
-        description: "Target app version"
       source_folder:
         required: true
         type: string
@@ -41,6 +37,7 @@ jobs:
       - name: Package Helm chart and get resulting file name
         id: package_chart
         run: |
-          CHART_PATH=$(helm package ${{ inputs.source_folder }} --version ${{ inputs.chart_semver }} --app-version ${{ inputs.app_version }} | grep 'Successfully packaged chart' | awk -F': ' '{print $2}')
-          CHART_FILE_NAME=$(basename $CHART_PATH)
+          PKGOUT=$(mktemp -d --tmpdir=.)
+          helm package ${{ inputs.source_folder }} --version ${{ inputs.semver_lowercase }} --app-version ${{ inputs.semver_lowercase }} -d $PKGOUT
+          CHART_FILE_NAME=$(ls -d "$PKGOUT/"*.tgz)
           echo "::set-output name=chart_file_name::$CHART_FILE_NAME"
