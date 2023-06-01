@@ -60,7 +60,7 @@ jobs:
         run: |
           PKGOUT=$(mktemp -d)
           helm package ${{ inputs.source_folder }} --version ${{ inputs.semver_lowercase }} --app-version ${{ inputs.semver_lowercase }} -d $PKGOUT
-          CHART_FILE_NAME=$(ls ls -d "$PKGOUT/"*)
+          CHART_FILE_NAME=$(ls -d "$PKGOUT/"*)
           echo "::set-output name=chart_file_name::$CHART_FILE_NAME"
 
       - name: Install Octopus CLI
