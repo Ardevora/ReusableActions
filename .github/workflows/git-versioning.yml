@@ -15,9 +15,6 @@ on:
       semver_lowercase:
         description: "workflow semantic version number lowercased"
         value: ${{ jobs.version_job.outputs.semver_lowercase }}
-      majorMinorPatch:
-        description: "workflow semantic major minor patch"
-        value: ${{ jobs.version_job.outputs.majorMinorPatch }}
 
 jobs:
   version_job:
@@ -40,7 +37,7 @@ jobs:
 
       - name: Display the version
         run: |
-          echo "semVer: ${{ steps.gitversion.outputs.semVer }}"
+          echo "Version: ${{ steps.gitversion.outputs.semVer }}"
 
       - name: Change string case
         id: changecase
@@ -51,4 +48,3 @@ jobs:
     outputs:
       semver: ${{ steps.gitversion.outputs.semVer }}
       semver_lowercase: ${{ steps.changecase.outputs.lowercase }}
-      majorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}
