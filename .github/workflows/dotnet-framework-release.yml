@@ -39,7 +39,7 @@ on:
       octopus_space:
         required: false
         type: string
-        default: "default"
+        default: "Default"
         description: "The octopus space to deploy to"
       create_release:
         required: false
