@@ -120,7 +120,7 @@ jobs:
           version: latest
 
       - name: Push packages to octopus
-        uses: OctopusDeploy/push-package-action@v1.1.1
+        uses: OctopusDeploy/push-package-action@v3
         with:
           api_key: ${{ secrets.OCTOPUS_APIKEY }}
           server: ${{ secrets.OCTOPUS_SERVER_URL }}
@@ -129,7 +129,7 @@ jobs:
 
       - name: Create and deploy release in Octopus
         if: ${{ inputs.create_release && inputs.octopus_project != '' }}
-        uses: OctopusDeploy/create-release-action@v1.1.1
+        uses: OctopusDeploy/create-release-action@v3
         with:
           api_key: ${{ secrets.OCTOPUS_APIKEY }}
           server: ${{ secrets.OCTOPUS_SERVER_URL }}
